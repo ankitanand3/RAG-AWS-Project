@@ -16,7 +16,6 @@ from app.config import get_settings
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
-settings = get_settings()
 
 
 class DocumentProcessor:
@@ -35,6 +34,7 @@ class DocumentProcessor:
             chunk_size: Size of text chunks (default from settings)
             chunk_overlap: Overlap between chunks (default from settings)
         """
+        settings = get_settings()
         self.chunk_size = chunk_size or settings.chunk_size
         self.chunk_overlap = chunk_overlap or settings.chunk_overlap
 

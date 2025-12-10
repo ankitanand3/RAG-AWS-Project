@@ -8,7 +8,6 @@ from app.config import get_settings
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
-settings = get_settings()
 
 
 @lru_cache
@@ -18,6 +17,7 @@ def get_embeddings() -> OpenAIEmbeddings:
     Returns:
         Configured OpenAIEmbeddings instance
     """
+    settings = get_settings()
     logger.info(f"Initializing embeddings model: {settings.embedding_model}")
 
     embeddings = OpenAIEmbeddings(
@@ -34,6 +34,7 @@ class EmbeddingService:
 
     def __init__(self):
         """Initialize embedding service."""
+        settings = get_settings()
         self.embeddings = get_embeddings()
         self.model_name = settings.embedding_model
 
