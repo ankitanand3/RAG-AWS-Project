@@ -97,15 +97,11 @@ def mock_rag_chain():
         chain.aquery.return_value = "This is a test answer."
         chain.query_with_sources.return_value = {
             "answer": "This is a test answer.",
-            "sources": [
-                {"content": "Test content", "metadata": {"source": "test.pdf"}}
-            ],
+            "sources": [{"content": "Test content", "metadata": {"source": "test.pdf"}}],
         }
         chain.aquery_with_sources.return_value = {
             "answer": "This is a test answer.",
-            "sources": [
-                {"content": "Test content", "metadata": {"source": "test.pdf"}}
-            ],
+            "sources": [{"content": "Test content", "metadata": {"source": "test.pdf"}}],
         }
         mock.return_value = chain
         yield chain
@@ -120,21 +116,15 @@ def mock_rag_chain_with_evaluation():
         chain.aquery.return_value = "This is a test answer."
         chain.query_with_sources.return_value = {
             "answer": "This is a test answer.",
-            "sources": [
-                {"content": "Test content", "metadata": {"source": "test.pdf"}}
-            ],
+            "sources": [{"content": "Test content", "metadata": {"source": "test.pdf"}}],
         }
         chain.aquery_with_sources.return_value = {
             "answer": "This is a test answer.",
-            "sources": [
-                {"content": "Test content", "metadata": {"source": "test.pdf"}}
-            ],
+            "sources": [{"content": "Test content", "metadata": {"source": "test.pdf"}}],
         }
         chain.aquery_with_evaluation.return_value = {
             "answer": "This is a test answer.",
-            "sources": [
-                {"content": "Test content", "metadata": {"source": "test.pdf"}}
-            ],
+            "sources": [{"content": "Test content", "metadata": {"source": "test.pdf"}}],
             "evaluation": {
                 "faithfulness": 0.95,
                 "answer_relevancy": 0.87,
@@ -155,21 +145,15 @@ def mock_rag_chain_with_evaluation_error():
         chain.aquery.return_value = "This is a test answer."
         chain.query_with_sources.return_value = {
             "answer": "This is a test answer.",
-            "sources": [
-                {"content": "Test content", "metadata": {"source": "test.pdf"}}
-            ],
+            "sources": [{"content": "Test content", "metadata": {"source": "test.pdf"}}],
         }
         chain.aquery_with_sources.return_value = {
             "answer": "This is a test answer.",
-            "sources": [
-                {"content": "Test content", "metadata": {"source": "test.pdf"}}
-            ],
+            "sources": [{"content": "Test content", "metadata": {"source": "test.pdf"}}],
         }
         chain.aquery_with_evaluation.return_value = {
             "answer": "This is a test answer.",
-            "sources": [
-                {"content": "Test content", "metadata": {"source": "test.pdf"}}
-            ],
+            "sources": [{"content": "Test content", "metadata": {"source": "test.pdf"}}],
             "evaluation": {
                 "faithfulness": None,
                 "answer_relevancy": None,

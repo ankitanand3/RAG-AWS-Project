@@ -51,15 +51,11 @@ class TestDocumentEndpoints:
         """Test uploading unsupported file type."""
         # Create a mock file with unsupported extension
         file_content = b"test content"
-        files = {
-            "file": ("test.xyz", io.BytesIO(file_content), "application/octet-stream")
-        }
+        files = {"file": ("test.xyz", io.BytesIO(file_content), "application/octet-stream")}
 
         with patch("app.api.routes.documents.DocumentProcessor") as mock_processor:
             mock_instance = MagicMock()
-            mock_instance.process_upload.side_effect = ValueError(
-                "Unsupported file extension"
-            )
+            mock_instance.process_upload.side_effect = ValueError("Unsupported file extension")
             mock_processor.return_value = mock_instance
 
             response = client.post("/documents/upload", files=files)

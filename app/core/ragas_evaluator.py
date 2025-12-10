@@ -91,12 +91,10 @@ class RAGASEvaluator:
 
             # Extract scores
             scores = {
-                "faithfulness": float(result["faithfulness"])
-                if "faithfulness" in result
-                else None,
-                "answer_relevancy": float(result["answer_relevancy"])
-                if "answer_relevancy" in result
-                else None,
+                "faithfulness": float(result["faithfulness"]) if "faithfulness" in result else None,
+                "answer_relevancy": (
+                    float(result["answer_relevancy"]) if "answer_relevancy" in result else None
+                ),
                 "evaluation_time_ms": round(evaluation_time_ms, 2),
                 "error": None,
             }
@@ -139,8 +137,7 @@ class RAGASEvaluator:
         }
 
         logger.debug(
-            f"Prepared dataset with {len(contexts)} contexts "
-            f"for question: {question[:50]}..."
+            f"Prepared dataset with {len(contexts)} contexts " f"for question: {question[:50]}..."
         )
 
         return Dataset.from_dict(data)

@@ -131,9 +131,11 @@ class RAGChain:
             # Format sources
             sources = [
                 {
-                    "content": doc.page_content[:500] + "..."
-                    if len(doc.page_content) > 500
-                    else doc.page_content,
+                    "content": (
+                        doc.page_content[:500] + "..."
+                        if len(doc.page_content) > 500
+                        else doc.page_content
+                    ),
                     "metadata": doc.metadata,
                 }
                 for doc in source_docs
@@ -189,9 +191,11 @@ class RAGChain:
             # Format sources
             sources = [
                 {
-                    "content": doc.page_content[:500] + "..."
-                    if len(doc.page_content) > 500
-                    else doc.page_content,
+                    "content": (
+                        doc.page_content[:500] + "..."
+                        if len(doc.page_content) > 500
+                        else doc.page_content
+                    ),
                     "metadata": doc.metadata,
                 }
                 for doc in source_docs
@@ -207,9 +211,7 @@ class RAGChain:
             logger.error(f"Error processing async query with sources: {e}")
             raise
 
-    async def aquery_with_evaluation(
-        self, question: str, include_sources: bool = True
-    ) -> dict:
+    async def aquery_with_evaluation(self, question: str, include_sources: bool = True) -> dict:
         """Execute async RAG query with RAGAS evaluation.
 
         Args:
