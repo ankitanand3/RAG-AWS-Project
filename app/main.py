@@ -83,7 +83,7 @@ app.include_router(query.router)
 @app.get("/", response_class=HTMLResponse, tags=["Root"])
 async def root():
     """Serve the main UI."""
-    with open("static/index.html", "r") as f:
+    with open("static/index.html") as f:
         return f.read()
 
 
