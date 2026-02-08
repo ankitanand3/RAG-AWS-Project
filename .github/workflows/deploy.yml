@@ -93,11 +93,13 @@ jobs:
             OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
             QDRANT_URL=${{ secrets.QDRANT_URL }}
             QDRANT_API_KEY=${{ secrets.QDRANT_API_KEY }}
+            COLLECTION_NAME=${{ secrets.COLLECTION_NAME || 'rag_documents' }}
+            EMBEDDING_MODEL=text-embedding-3-large
             LOG_LEVEL=INFO
             LANGSMITH_TRACING=true
             LANGSMITH_API_KEY=${{ secrets.LANGSMITH_API_KEY }}
             LANGSMITH_PROJECT=rag-qa-production
-            LANGSMITH_ENDPOINT=https://eu.api.smith.langchain.com
+            LANGSMITH_ENDPOINT=https://api.smith.langchain.com
 
       - name: Output App Runner URL
         run: |
