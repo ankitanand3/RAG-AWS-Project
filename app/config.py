@@ -18,9 +18,9 @@ class Settings(BaseSettings):
     # OpenAI Configuration
     openai_api_key: str
 
-    # Qdrant Cloud Configuration
+    # Qdrant Configuration (supports both Cloud and Docker)
     qdrant_url: str
-    qdrant_api_key: str
+    qdrant_api_key: str | None = None  # Optional for local Docker deployments
 
     # Collection Settings
     collection_name: str = "rag_documents"

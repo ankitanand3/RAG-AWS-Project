@@ -17,8 +17,32 @@ from app.utils.logger import get_logger
 logger = get_logger(__name__)
 settings = get_settings()
 
-# Embedding dimension for text-embedding-3-small
-EMBEDDING_DIMENSION = 1536
+# Embedding dimensions for different OpenAI models
+EMBEDDING_DIMENSIONS = {
+    "text-embedding-3-small": 1536,
+    "text-embedding-3-large": 3072,
+    "text-embedding-ada-002": 1536,
+}
+
+
+def get_embedding_dimension() -> int:
+    """Get embedding dimension based on configured model.
+
+    Returns:
+        Embedding dimension for the configured model
+    """
+    model = settings.embedding_model
+    dimension = EMBEDDING_DIMENSIONS.get(model)
+
+    if dimension is None:
+        logger.warning(
+            f"Unknown embedding model '{model}', defaulting to 1536 dimensions. "
+            f"Known models: {list(EMBEDDING_DIMENSIONS.keys())}"
+        )
+        return 1536
+
+    logger.debug(f"Using {dimension} dimensions for model '{model}'")
+    return dimension
 
 
 @lru_cache
@@ -30,10 +54,15 @@ def get_qdrant_client() -> QdrantClient:
     """
     logger.info(f"Connecting to Qdrant at: {settings.qdrant_url}")
 
-    client = QdrantClient(
-        url=settings.qdrant_url,
-        api_key=settings.qdrant_api_key,
-    )
+    # For local Docker deployment, api_key is optional
+    client_kwargs = {"url": settings.qdrant_url}
+    if settings.qdrant_api_key:
+        client_kwargs["api_key"] = settings.qdrant_api_key
+        logger.info("Using Qdrant with API key authentication")
+    else:
+        logger.info("Using Qdrant without authentication (local Docker mode)")
+
+    client = QdrantClient(**client_kwargs)
 
     logger.info("Qdrant client connected successfully")
     return client
@@ -56,10 +85,14 @@ class VectorStoreService:
         self._ensure_collection()
 
         # Initialize LangChain Qdrant vector store
+        # Check if collection exists and get its vector name
+        vector_name = self._get_vector_name()
+
         self.vector_store = QdrantVectorStore(
             client=self.client,
             collection_name=self.collection_name,
             embedding=self.embeddings,
+            vector_name=vector_name,
         )
 
         logger.info(f"VectorStoreService initialized for collection: {self.collection_name}")
@@ -73,15 +106,47 @@ class VectorStoreService:
                 f"{collection_info.points_count} points"
             )
         except UnexpectedResponse:
-            logger.info(f"Creating collection: {self.collection_name}")
+            embedding_dim = get_embedding_dimension()
+            logger.info(
+                f"Creating collection: {self.collection_name} "
+                f"with {embedding_dim} dimensions"
+            )
             self.client.create_collection(
                 collection_name=self.collection_name,
                 vectors_config=VectorParams(
-                    size=EMBEDDING_DIMENSION,
+                    size=embedding_dim,
                     distance=Distance.COSINE,
                 ),
             )
             logger.info(f"Collection '{self.collection_name}' created successfully")
+
+    def _get_vector_name(self) -> str:
+        """Get the vector field name from existing collection or use default.
+
+        Returns:
+            Vector field name to use
+        """
+        try:
+            collection_info = self.client.get_collection(self.collection_name)
+            vectors_config = collection_info.config.params.vectors
+
+            # Handle named vectors (dict-like structure)
+            if isinstance(vectors_config, dict):
+                # Named vectors - get the first vector name
+                vector_names = list(vectors_config.keys())
+                if vector_names:
+                    vector_name = vector_names[0]
+                    logger.info(f"Using existing vector field: '{vector_name}'")
+                    return vector_name
+
+            # Single default vector (VectorParams object - unnamed)
+            logger.info("Using default unnamed vector field")
+            return ""
+
+        except Exception as e:
+            # Collection doesn't exist or error reading config, use default
+            logger.warning(f"Could not detect vector name, using default: {e}")
+            return ""
 
     def add_documents(self, documents: list[Document]) -> list[str]:
         """Add documents to the vector store.
