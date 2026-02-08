@@ -642,3 +642,4 @@ Special thanks to all [contributors](https://github.com/yourusername/rag-qa-proj
 [Contribute](CONTRIBUTING.md)
 
 </div>
+
