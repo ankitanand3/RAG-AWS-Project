@@ -108,8 +108,7 @@ class VectorStoreService:
         except UnexpectedResponse:
             embedding_dim = get_embedding_dimension()
             logger.info(
-                f"Creating collection: {self.collection_name} "
-                f"with {embedding_dim} dimensions"
+                f"Creating collection: {self.collection_name} " f"with {embedding_dim} dimensions"
             )
             self.client.create_collection(
                 collection_name=self.collection_name,
